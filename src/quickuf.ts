@@ -1,4 +1,4 @@
-export class QuickFindUF {
+export class QuickUnionUF {
     ids: number[]
 
     constructor(N: number) {
@@ -10,18 +10,26 @@ export class QuickFindUF {
         }
     }
 
+    root(i: number) {
+        let id = this.ids[i];
+
+        while (id !== this.ids[id]) {
+            id = this.ids[id]
+        }
+
+        return id;
+    }
+
     connected(p: number, q: number): boolean {
-        return this.ids[p] === this.ids[q]
+        let idP = this.root(p)
+        let idQ = this.root(q)
+
+        return idQ === idP
     }
 
     union(p: number, q: number) {
-        const pid = this.ids[p]
-        const qid = this.ids[q]
-
-        for (let i = 0; i < this.ids.length; i++) {
-            if (this.ids[i] === pid) {
-                this.ids[i] = qid;
-            }
-        }
+        let i = this.root(p);
+        let j = this.root(q);
+        this.ids[i] = j;
     }
 }
