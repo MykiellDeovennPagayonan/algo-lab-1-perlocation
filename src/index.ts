@@ -1,22 +1,27 @@
-import readline from 'readline-sync'
-import { QuickUnionUF } from './quickuf'
+import readline from "readline-sync";
+import { QuickUnionUF } from "./quickuf";
+import { displayMatrix } from "./displayMatrix";
+import { openTile } from "./openTile";
 
-console.log('hi!')
+console.log("hi!");
 
-let N = readline.questionInt()
-let uf = new QuickUnionUF(N)
-let input = readline.question()
+let N = readline.questionInt();
 
-while (input !== "") {
-    let p = parseInt(input.split(' ')[0])
-    let q = parseInt(input.split(' ')[1])
+let matrix: Array<Array<boolean>> = [];
 
-    if (!uf.connected(p, q)) {
-        uf.union(p, q)
-        console.log(`${p} and ${q} are connected!`)
-    }
-
-    console.log(uf.ids)
-
-    input = readline.question()
+for (let i = 0; i < N; i++) {
+  let array = [];
+  for (let j = 0; j < N; j++) {
+    array.push(false);
+  }
+  matrix.push(array);
 }
+
+let ans = readline.questionInt();
+
+while (ans !== 0) {
+  matrix = openTile(matrix, N)
+  displayMatrix(matrix);
+  ans = readline.questionInt()
+}
+
