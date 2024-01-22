@@ -1,22 +1,46 @@
+import { Percolation } from './percolation';
+
 export class PercolationStats {
-  // perform independent trials on an n-by-n grid
+  private thresholds: number[];
+  private trials: number;
+
   constructor(n: number, trials: number) {
-    return
+    if (n <= 0 || trials <= 0) {
+      throw new Error('n and trials must be greater than 0');
+    }
+    this.trials = trials;
+    this.thresholds = [];
+
+    for (let i = 0; i < trials; i++) {
+      const percolation = new Percolation(n);
+      while (!percolation.percolates()) {
+        const row = Math.floor(Math.random() * n);
+        const col = Math.floor(Math.random() * n);
+        percolation.open(row, col);
+      }
+      // console.log(percolation.grid, percolation.numberOfOpenSites())
+      const threshold = percolation.numberOfOpenSites() / (n * n);
+      // console.log(threshold)
+      this.thresholds.push(threshold);
+    }
   }
-  // sample mean of percolation threshold
+
   mean(): number {
-    return 0.0
+    // console.log(this.thresholds)
+    return this.thresholds.reduce((acc, val) => acc + val, 0) / this.trials;
   }
-  // sample standard deviation of percolation threshold
+
   stddev(): number {
-    return 0.0
+    const mean = this.mean();
+    const variance = this.thresholds.reduce((acc, val) => acc + (val - mean) ** 2, 0) / (this.trials - 1);
+    return Math.sqrt(variance);
   }
-  // low endpoint of 95% confidence interval
+
   confidenceLo(): number {
-    return 0.0
+    return this.mean() - (1.96 * this.stddev()) / Math.sqrt(this.trials);
   }
-  // high endpoint of 95% confidence interval
+
   confidenceHi(): number {
-    return 0.0
+    return this.mean() + (1.96 * this.stddev()) / Math.sqrt(this.trials);
   }
 }

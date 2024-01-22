@@ -1,43 +1,85 @@
+import { QuickUnionUF } from "./quickuf";
+
 export class Percolation {
-  matrix: Array<Array<boolean>>;
-  size: number;
-  // creates n-by-n grid, with all sites initially blocked
+  public grid: boolean[];
+  private size: number;
+  private openSites: number;
+  private uf: QuickUnionUF;
+
   constructor(n: number) {
-    this.matrix = [];
+    if (n <= 0) {
+      throw new Error('n must be greater than 0');
+    }
     this.size = n;
+    this.openSites = 0;
+    this.grid = new Array(n * n).fill(false);
+    this.uf = new QuickUnionUF(n * n + 2);
 
     for (let i = 0; i < n; i++) {
-      let array = [];
-      for (let j = 0; j < n; j++) {
-        array.push(false);
-      }
-      this.matrix.push(array);
+      this.uf.union(this.getIndex(0, i), n * n); //connects to a virtual root at the top
+      this.uf.union(this.getIndex(n - 1, i), n * n + 1); //connects to a virtual root at the bottom
     }
-
-    console.log(this.matrix)
   }
 
-  // opens the site (row, col) if it is not open already
   open(row: number, col: number) {
-    this.matrix[col][row] = true;
-    console.log('opened', col, row)
-    console.log(this.matrix)
+    const index = this.getIndex(row, col);
+    // console.log(row,col,'index is',index)
+
+    if (!this.grid[index]) { // if the grid is still false
+      this.grid[index] = true;
+      this.openSites++;
+
+      // up
+      if (this.isValid(row - 1, col) && this.isOpen(row - 1, col)) {
+        this.uf.union(index, this.getIndex(row - 1, col));
+      }
+
+      //down
+      if (this.isValid(row + 1, col) && this.isOpen(row + 1, col)) {
+        this.uf.union(index, this.getIndex(row + 1, col));
+      }
+
+      // left
+      if (this.isValid(row, col - 1) && this.isOpen(row, col - 1)) {
+        this.uf.union(index, this.getIndex(row, col - 1));
+      }
+
+      // right
+      if (this.isValid(row, col + 1) && this.isOpen(row, col + 1)) {
+        this.uf.union(index, this.getIndex(row, col + 1));
+      }
+    }
   }
 
-  // is the site (row, col) open?
   isOpen(row: number, col: number): boolean {
-    return this.matrix[col][row];
+    return this.grid[this.getIndex(row, col)];
   }
 
-  // returns the number of open sites
+  isFull(row: number, col: number): boolean {
+    // console.log(this.getIndex(row, col), this.size * this.size, 'testings full')
+    return this.uf.connected(this.getIndex(row, col), this.size * this.size);
+  }
+
   numberOfOpenSites(): number {
-    return this.matrix.reduce((count, row) => {
-      return count + row.filter(value => value === true).length;
-    }, 0);
+    return this.openSites;
   }
 
-  // does the system percolate?
   percolates(): boolean {
-    return true
+    let n = this.size;
+    // note that n*n is the virtual top
+    // and n*n+1 is the virtual bottom
+    // this checks if both are connected
+    if (this.uf.connected(n * n, n * n + 1)) {
+      return true; 
+    }
+    return false;
+  }
+
+  private getIndex(row: number, col: number): number {
+    return row * this.size + col;
+  }
+
+  private isValid(row: number, col: number): boolean {
+    return row >= 0 && row < this.size && col >= 0 && col < this.size;
   }
 }
