@@ -1,46 +1,11 @@
-import readline from "readline-sync";
-import { QuickUnionUF } from "./quickuf";
-import { displayMatrix } from "./displayMatrix";
-import { openTile } from "./openTile";
-import { Percolation } from "./percolation";
+import * as readlineSync from 'readline-sync';
+import { PercolationStats } from './percolationStats';
 
-console.log("hi!");
+const n = readlineSync.questionInt('Enter the size of the grid (n): ');
+const T = readlineSync.questionInt('Enter the number of trials (T): ');
 
-let N = readline.questionInt();
+const percolationStats = new PercolationStats(n, T);
 
-let percolate = new Percolation(N);
-
-let ans = readline.question();
-
-while (ans !== "") {
-    let col = parseInt(ans.split(' ')[0])
-    let row = parseInt(ans.split(' ')[1])
-
-    if (!percolate.isOpen(col,row)) {
-        percolate.open(col,row)
-    } else {
-        console.log('already opened')
-    }
-
-    ans = readline.question()
-}
-
-
-// let matrix: Array<Array<boolean>> = [];
-
-// for (let i = 0; i < N; i++) {
-//   let array = [];
-//   for (let j = 0; j < N; j++) {
-//     array.push(false);
-//   }
-//   matrix.push(array);
-// }
-
-// let ans = readline.questionInt();
-
-// while (ans !== 0) {
-//   matrix = openTile(matrix, N)
-//   displayMatrix(matrix);
-//   ans = readline.questionInt()
-// }
-
+console.log(`Mean: ${percolationStats.mean()}`);
+console.log(`Standard Deviation: ${percolationStats.stddev()}`);
+console.log(`95% Confidence Interval: [${percolationStats.confidenceLo()}, ${percolationStats.confidenceHi()}]`);
