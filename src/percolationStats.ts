@@ -27,7 +27,7 @@ export class PercolationStats {
             do {
               row = Math.floor(Math.random() * n);
               col = Math.floor(Math.random() * n);
-            } while (percolation.isOpen(row, col));
+            } while (percolation.isOpen(row, col)); // if already open ang site, it would generate a new row and col
 
             percolation.open(row, col);
             console.log(`Trial: ${i + 1}\nOpened row ${row}, column ${col}`)
@@ -52,8 +52,8 @@ export class PercolationStats {
         do {
           row = Math.floor(Math.random() * n);
           col = Math.floor(Math.random() * n);
-        } while (percolation.isOpen(row, col));
-        
+        } while (percolation.isOpen(row, col)); // if already open ang site, it would generate a new row and col
+
         percolation.open(row, col);
       }
       const threshold = percolation.numberOfOpenSites() / (n * n);
