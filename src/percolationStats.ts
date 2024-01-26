@@ -23,8 +23,12 @@ export class PercolationStats {
       while (!percolation.percolates()) {
         await new Promise<void>((resolve) => {
           setTimeout(() => {
-            const row = Math.floor(Math.random() * n);
-            const col = Math.floor(Math.random() * n);
+            let row, col;
+            do {
+              row = Math.floor(Math.random() * n);
+              col = Math.floor(Math.random() * n);
+            } while (percolation.isOpen(row, col));
+
             percolation.open(row, col);
             console.log(`Trial: ${i + 1}\nOpened row ${row}, column ${col}`)
             console.log(percolation.showGrid());
@@ -44,8 +48,12 @@ export class PercolationStats {
     for (let i = 0; i < trials; i++) {
       const percolation = new Percolation(n);
       while (!percolation.percolates()) {
-        const row = Math.floor(Math.random() * n);
-        const col = Math.floor(Math.random() * n);
+        let row, col;
+        do {
+          row = Math.floor(Math.random() * n);
+          col = Math.floor(Math.random() * n);
+        } while (percolation.isOpen(row, col));
+        
         percolation.open(row, col);
       }
       const threshold = percolation.numberOfOpenSites() / (n * n);
