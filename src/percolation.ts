@@ -15,10 +15,13 @@ export class Percolation {
     this.grid = new Array(n * n).fill(false);
     this.uf = new QuickUnionUF(n * n + 2);
 
+    // console.log(this.uf) // uf object before it is connected
+
     for (let i = 0; i < n; i++) {
       this.uf.union(this.getIndex(0, i), n * n); //connects to a virtual root at the top
       this.uf.union(this.getIndex(n - 1, i), n * n + 1); //connects to a virtual root at the bottom
     }
+    // console.log(this.uf) // u can see connected ang top and bottom rows sa last 2 indices of the id array.
   }
 
   open(row: number, col: number) {
@@ -65,14 +68,34 @@ export class Percolation {
   }
 
   percolates(): boolean {
-    let n = this.size;
+    const n = this.size;
     // note that n*n is the virtual top
     // and n*n+1 is the virtual bottom
     // this checks if both are connected
     if (this.uf.connected(n * n, n * n + 1)) {
-      return true; 
+      return true;
     }
     return false;
+  }
+
+  showGrid(): string {
+    const n = this.size;
+    let row = '';
+
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n; j++) {
+        const index = this.getIndex(i, j);
+        if (this.isFull(i, j) && this.grid[index]) {
+          row += '[\u001b[34mo\u001b[0m]'; // grid is full
+        } else if (this.grid[index]) {
+          row += '[o]'; // grid is opened but indi full
+        } else {
+          row += '[\u001b[31mx\u001b[0m]'; // grid is blocked
+        }
+      }
+      row += '\n'
+    }
+    return row;
   }
 
   private getIndex(row: number, col: number): number {
