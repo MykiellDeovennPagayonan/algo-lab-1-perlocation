@@ -23,19 +23,23 @@ export class PercolationStats {
       while (!percolation.percolates()) {
         await new Promise<void>((resolve) => {
           setTimeout(() => {
-            let row, col;
+            let row: number;
+            let col: number;
             do {
               row = Math.floor(Math.random() * n);
               col = Math.floor(Math.random() * n);
-            } while (percolation.isOpen(row, col)); // if already open ang site, it would generate a new row and col
+            } while (percolation.isOpen(row, col));
+            // if site is already opened, it would generate a new row and col
 
             percolation.open(row, col);
-            console.log(`Trial: ${i + 1}\nOpened row ${row}, column ${col}`)
+            console.log(`Trial ${i + 1}`)
+            console.log(`Opened row ${row}, column ${col}`)
             console.log(percolation.showGrid());
             resolve();
           }, 1000);
         });
       }
+      console.log("Percolated!\n--------------");
       const threshold = percolation.numberOfOpenSites() / (n * n);
       this.thresholds.push(threshold);
     }
@@ -48,28 +52,30 @@ export class PercolationStats {
     for (let i = 0; i < trials; i++) {
       const percolation = new Percolation(n);
       while (!percolation.percolates()) {
-        let row, col;
+        let row: number;
+        let col: number;
         do {
           row = Math.floor(Math.random() * n);
           col = Math.floor(Math.random() * n);
-        } while (percolation.isOpen(row, col)); // if already open ang site, it would generate a new row and col
+        } while (percolation.isOpen(row, col));
+        // if site is already opened, it would generate a new row and col
 
         percolation.open(row, col);
       }
       const threshold = percolation.numberOfOpenSites() / (n * n);
       this.thresholds.push(threshold);
     }
+    console.log('--------------');
     console.log(`Mean: ${this.mean()}`);
     console.log(`Standard Deviation: ${this.stddev()}`);
     console.log(`95% Confidence Interval: [${this.confidenceLo()}, ${this.confidenceHi()}]`);
   }
 
-  mean(): number {
-    // console.log(this.thresholds)
+  private mean(): number {
     return this.thresholds.reduce((acc, val) => acc + val, 0) / this.trials;
   }
 
-  stddev(): number {
+  private stddev(): number {
     if (this.trials < 2) {
       return 0;
     };
@@ -79,11 +85,11 @@ export class PercolationStats {
     return Math.sqrt(variance);
   }
 
-  confidenceLo(): number {
+  private confidenceLo(): number {
     return this.mean() - (1.96 * this.stddev()) / Math.sqrt(this.trials);
   }
 
-  confidenceHi(): number {
+  private confidenceHi(): number {
     return this.mean() + (1.96 * this.stddev()) / Math.sqrt(this.trials);
   }
 }

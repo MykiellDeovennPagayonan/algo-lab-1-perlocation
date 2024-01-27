@@ -1,7 +1,7 @@
 import { QuickUnionUF } from "./quickuf";
 
 export class Percolation {
-  public grid: boolean[];
+  private grid: boolean[];
   private size: number;
   private openSites: number;
   private uf: QuickUnionUF;
@@ -15,43 +15,45 @@ export class Percolation {
     this.grid = new Array(n * n).fill(false);
     this.uf = new QuickUnionUF(n * n + 2);
 
-    // console.log(this.uf) // uf object before it is connected
-
     for (let i = 0; i < n; i++) {
-      this.uf.union(this.getIndex(0, i), n * n); //connects to a virtual root at the top
-      this.uf.union(this.getIndex(n - 1, i), n * n + 1); //connects to a virtual root at the bottom
+      this.uf.union(this.getIndex(0, i), n * n); //connects top row to the virtual top
+      this.uf.union(this.getIndex(n - 1, i), n * n + 1); //connects bottom row to the virtual bottom
     }
-    // console.log(this.uf) // u can see connected ang top and bottom rows sa last 2 indices of the id array.
   }
 
   open(row: number, col: number) {
+    const n = this.size;
     const index = this.getIndex(row, col);
-    // console.log(row,col,'index is',index)
 
-    if (!this.grid[index]) { // if the grid is still false
-      this.grid[index] = true;
-      this.openSites++;
+    this.grid[index] = true;
+    this.openSites++;
 
-      // up
-      if (this.isValid(row - 1, col) && this.isOpen(row - 1, col)) {
-        this.uf.union(index, this.getIndex(row - 1, col));
-      }
-
-      //down
-      if (this.isValid(row + 1, col) && this.isOpen(row + 1, col)) {
-        this.uf.union(index, this.getIndex(row + 1, col));
-      }
-
-      // left
-      if (this.isValid(row, col - 1) && this.isOpen(row, col - 1)) {
-        this.uf.union(index, this.getIndex(row, col - 1));
-      }
-
-      // right
-      if (this.isValid(row, col + 1) && this.isOpen(row, col + 1)) {
-        this.uf.union(index, this.getIndex(row, col + 1));
-      }
+    // up
+    if (this.isValid(row - 1, col) && this.isOpen(row - 1, col)) {
+      this.uf.union(index, this.getIndex(row - 1, col));
     }
+
+    //down
+    if (this.isValid(row + 1, col) && this.isOpen(row + 1, col)) {
+      this.uf.union(index, this.getIndex(row + 1, col));
+    }
+
+    // left
+    if (this.isValid(row, col - 1) && this.isOpen(row, col - 1)) {
+      this.uf.union(index, this.getIndex(row, col - 1));
+    }
+
+    // right
+    if (this.isValid(row, col + 1) && this.isOpen(row, col + 1)) {
+      this.uf.union(index, this.getIndex(row, col + 1));
+    }
+
+    // // scans the bottom rows if they are connected to the virtual top, if it is then it connects sa virtual bottom
+    // for (let i = 0; i < n; i++) {
+    //   if (this.uf.connected(this.getIndex(n - 1, i), n * n)) {
+    //     this.uf.union(this.getIndex(n - 1, i), n * n + 1);
+    //   }
+    // }
   }
 
   isOpen(row: number, col: number): boolean {
@@ -59,8 +61,8 @@ export class Percolation {
   }
 
   isFull(row: number, col: number): boolean {
-    // console.log(this.getIndex(row, col), this.size * this.size, 'testings full')
-    return this.uf.connected(this.getIndex(row, col), this.size * this.size);
+    const n = this.size;
+    return this.uf.connected(this.getIndex(row, col), n * n);
   }
 
   numberOfOpenSites(): number {
@@ -69,8 +71,8 @@ export class Percolation {
 
   percolates(): boolean {
     const n = this.size;
-    // note that n*n is the virtual top
-    // and n*n+1 is the virtual bottom
+    // note that n*n is the index of the virtual top
+    // and n*n+1 is the index of the virtual bottom
     // this checks if both are connected
     if (this.uf.connected(n * n, n * n + 1)) {
       return true;
