@@ -5,19 +5,23 @@ export class Percolation {
   private size: number;
   private openSites: number;
   private uf: QuickUnionUF;
+  private simulation: boolean;
 
-  constructor(n: number) {
+  constructor(n: number, simulation: boolean) {
     if (n <= 0) {
       throw new Error('n must be greater than 0');
     }
     this.size = n;
     this.openSites = 0;
+    this.simulation = simulation;
     this.grid = new Array(n * n).fill(false);
     this.uf = new QuickUnionUF(n * n + 2);
 
-    for (let i = 0; i < n; i++) {
-      this.uf.union(this.getIndex(0, i), n * n); //connects top row to the virtual top
-      this.uf.union(this.getIndex(n - 1, i), n * n + 1); //connects bottom row to the virtual bottom
+    if (!simulation) {
+      for (let i = 0; i < n; i++) {
+        this.uf.union(this.getIndex(0, i), n * n); //connects top row to the virtual top
+        this.uf.union(this.getIndex(n - 1, i), n * n + 1); //connects bottom row to the virtual bottom
+      }
     }
   }
 
@@ -48,12 +52,17 @@ export class Percolation {
       this.uf.union(index, this.getIndex(row, col + 1));
     }
 
-    // // scans the bottom rows if they are connected to the virtual top, if it is then it connects sa virtual bottom
-    // for (let i = 0; i < n; i++) {
-    //   if (this.uf.connected(this.getIndex(n - 1, i), n * n)) {
-    //     this.uf.union(this.getIndex(n - 1, i), n * n + 1);
-    //   }
-    // }
+    if (this.simulation) {
+      if (row === 0) {
+        this.uf.union(this.getIndex(row, col), n * n); //connects top row to the virtual top
+      }
+      // scans the bottom rows if they are connected to the virtual top, if it is then it connects sa virtual bottom
+      for (let i = 0; i < n; i++) {
+        if (this.uf.connected(this.getIndex(n - 1, i), n * n)) {
+          this.uf.union(this.getIndex(n - 1, i), n * n + 1);
+        }
+      }
+    }
   }
 
   isOpen(row: number, col: number): boolean {
