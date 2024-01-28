@@ -49,6 +49,7 @@ export class PercolationStats {
   }
 
   private runTrials(n: number, trials: number) {
+    console.time("Execution Time");
     for (let i = 0; i < trials; i++) {
       const percolation = new Percolation(n);
       while (!percolation.percolates()) {
@@ -66,6 +67,7 @@ export class PercolationStats {
       this.thresholds.push(threshold);
     }
     console.log('--------------');
+    console.timeEnd("Execution Time");
     console.log(`Mean: ${this.mean()}`);
     console.log(`Standard Deviation: ${this.stddev()}`);
     console.log(`95% Confidence Interval: [${this.confidenceLo()}, ${this.confidenceHi()}]`);

@@ -88,11 +88,11 @@ export class Percolation {
       for (let j = 0; j < n; j++) {
         const index = this.getIndex(i, j);
         if (this.isFull(i, j) && this.grid[index]) {
-          row += '[\u001b[34mo\u001b[0m]'; // grid is full
+          row += '[\u001b[36m■\u001b[0m]'; // grid is full
         } else if (this.grid[index]) {
-          row += '[o]'; // grid is opened but indi full
+          row += '[ ]'; // grid is opened but indi full
         } else {
-          row += '[\u001b[31mx\u001b[0m]'; // grid is blocked
+          row += '[\u001b[31m■\u001b[0m]'; // grid is blocked
         }
       }
       row += '\n'
