@@ -3,6 +3,7 @@ import { Percolation } from './percolation';
 export class PercolationStats {
   private thresholds: number[];
   private trials: number;
+  private size: number;
   private simulation: boolean;
 
   constructor(n: number, trials: number, simulation: boolean) {
@@ -11,13 +12,16 @@ export class PercolationStats {
     }
     this.trials = trials;
     this.thresholds = [];
+    this.size = n;
     this.simulation = simulation;
   }
 
-  async initialize(n: number, trials: number) {
+  async initialize() {
+    const n = this.size;
+
     if (this.simulation) {
       // SIMULATION MODE
-      for (let i = 0; i < trials; i++) {
+      for (let i = 0; i < this.trials; i++) {
         const percolation = new Percolation(n, this.simulation);
 
         console.log('--------------');
@@ -50,8 +54,7 @@ export class PercolationStats {
       }
     } else {
       // NORMAL MODE
-      console.time("\u001b[33mExecution Time\u001b[0m");
-      for (let i = 0; i < trials; i++) {
+      for (let i = 0; i < this.trials; i++) {
         const percolation = new Percolation(n, this.simulation);
 
         while (!percolation.percolates()) {

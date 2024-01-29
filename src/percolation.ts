@@ -17,7 +17,7 @@ export class Percolation {
     this.grid = new Array(n * n).fill(false);
     this.uf = new QuickUnionUF(n * n + 2);
 
-    if (!simulation) {
+    if (!this.simulation) {
       for (let i = 0; i < n; i++) {
         this.uf.union(this.getIndex(0, i), n * n); //connects top row to the virtual top
         this.uf.union(this.getIndex(n - 1, i), n * n + 1); //connects bottom row to the virtual bottom
@@ -26,6 +26,9 @@ export class Percolation {
   }
 
   open(row: number, col: number) {
+    // const [row, col, index] = this.randomizer();
+    // console.log(this.randomizer());
+
     const n = this.size;
     const index = this.getIndex(row, col);
 
@@ -116,4 +119,20 @@ export class Percolation {
   private isValid(row: number, col: number): boolean {
     return row >= 0 && row < this.size && col >= 0 && col < this.size;
   }
+
+  // private randomizer(): number[] {
+  //   const indices = this.grid.reduce((accumulator: number[], currentValue, currentIndex) => {
+  //     if (currentValue === false) accumulator.push(currentIndex);
+  //     return accumulator;
+  //   }, []);
+
+  //   const index = indices[Math.floor(Math.random() * indices.length)];
+
+  //   const width = Math.sqrt(this.grid.length);
+
+  //   let row = Math.floor(index / width);
+  //   let col = index % width;
+
+  //   return [row, col, index];
+  // }
 }

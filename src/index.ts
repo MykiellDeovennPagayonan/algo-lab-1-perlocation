@@ -8,16 +8,17 @@ const simulation = readlineSync.question('Simulation Mode (y/n)? ').toLowerCase(
 async function handleStart() {
   if (simulation === "y" || simulation === "yes") {
     const percolation = new PercolationStats(n, T, true);
-    await percolation.initialize(n, T);
+    await percolation.initialize();
 
     console.log('--------------');
     console.log(`\u001b[33mMean:\u001b[0m ${percolation.mean()}`);
     console.log(`\u001b[33mStandard Deviation:\u001b[0m ${percolation.stddev()}`);
     console.log(`\u001b[33m95% Confidence Interval:\u001b[0m [${percolation.confidenceLo()}, ${percolation.confidenceHi()}]`);
   } else {
+    console.time("\u001b[33mExecution Time\u001b[0m");
     const percolation = new PercolationStats(n, T, false);
-    percolation.initialize(n, T);
-    
+    percolation.initialize();
+
     console.log('--------------');
     console.timeEnd("\u001b[33mExecution Time\u001b[0m");
     console.log(`\u001b[33mMean:\u001b[0m ${percolation.mean()}`);
