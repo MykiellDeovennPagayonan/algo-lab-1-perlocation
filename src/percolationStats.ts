@@ -8,7 +8,7 @@ export class PercolationStats {
 
   constructor(n: number, trials: number, simulation: boolean) {
     if (n <= 0 || trials <= 0) {
-      throw new Error('n and trials must be greater than 0');
+      throw new Error('grid size or trials must be greater than 0');
     }
     this.trials = trials;
     this.thresholds = [];
@@ -16,7 +16,7 @@ export class PercolationStats {
     this.simulation = simulation;
   }
 
-  async initialize() {
+  async initialize(): Promise<void> {
     const n = this.size;
 
     if (this.simulation) {
@@ -25,7 +25,7 @@ export class PercolationStats {
         const percolation = new Percolation(n, this.simulation);
 
         console.log('--------------');
-        console.log(`Trial ${i + 1}`);
+        console.log(`Trial ${i + 1} out of ${this.trials}`);
         console.log(percolation.showGrid());
 
         while (!percolation.percolates()) {
@@ -41,11 +41,11 @@ export class PercolationStats {
 
               percolation.open(row, col);
 
-              console.log(`Trial ${i + 1}`);
+              console.log(`Trial ${i + 1} out of ${this.trials}`);
               console.log(`Opened row ${row}, column ${col}`);
               console.log(percolation.showGrid());
               resolve();
-            }, 400);
+            }, 500);
           });
         }
         console.log("Percolated!");
